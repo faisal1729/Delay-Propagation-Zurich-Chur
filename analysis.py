@@ -504,60 +504,6 @@ plt.show()
 
 """## 6. Residual diagnostics"""
 
-import matplotlib.pyplot as plt
-import numpy as np
-from scipy import stats
-
-# Build a figure with two rows: residuals-vs-fitted (top) and Q-Q plots (bottom)
-# and 8 columns: one per segment
-
-fig, axes = plt.subplots(2, 8, figsize=(24, 7), sharey='row')
-
-for k in range(len(corridor_names_ordered) - 1):
-    a = corridor_names_ordered[k]
-    b = corridor_names_ordered[k + 1]
-
-    pair = delay_matrix[[a, b]].dropna()
-    x = pair[a].values
-    y = pair[b].values
-
-    if len(x) < 5:
-        continue
-
-    # Fit OLS
-    result = stats.linregress(x, y)
-    y_hat = result.intercept + result.slope * x
-    residuals = y - y_hat
-
-    # --- Top row: residuals vs fitted values ---
-    ax_top = axes[0, k]
-    ax_top.scatter(y_hat, residuals, s=18, alpha=0.5, color='#4C72B0')
-    ax_top.axhline(0, color='#C44E52', linewidth=1, linestyle='--')
-    ax_top.set_title(f"{a}\n→ {b}\n(n = {len(x)})", fontsize=10)
-    if k == 0:
-        ax_top.set_ylabel("Residual (min)")
-    ax_top.set_xlabel("Fitted ŷ")
-    ax_top.grid(True, alpha=0.2)
-
-    # --- Bottom row: Q-Q plot against normal ---
-    ax_bot = axes[1, k]
-    stats.probplot(residuals, dist='norm', plot=ax_bot)
-    # The default probplot title is annoying; clear it
-    ax_bot.set_title("")
-    ax_bot.get_lines()[0].set_markerfacecolor('#4C72B0')
-    ax_bot.get_lines()[0].set_markeredgecolor('#4C72B0')
-    ax_bot.get_lines()[0].set_markersize(4)
-    ax_bot.get_lines()[1].set_color('#C44E52')
-    if k == 0:
-        ax_bot.set_ylabel("Ordered residuals")
-    ax_bot.set_xlabel("Theoretical quantile")
-    ax_bot.grid(True, alpha=0.2)
-
-plt.suptitle("Residual diagnostics per corridor segment", fontsize=14, y=1.02)
-plt.tight_layout()
-plt.savefig('residual_diagnostics.png', bbox_inches='tight', facecolor='white', dpi=180)
-plt.show()
-
 # Two-segment version, sized for a 16:9 slide
 fig, axes = plt.subplots(2, 2, figsize=(11, 8))
 
