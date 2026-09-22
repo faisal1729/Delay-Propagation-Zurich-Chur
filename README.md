@@ -1,17 +1,18 @@
 # Empirical delay propagation on the Zürich–Chur railway corridor
 
-A short empirical analysis of how arrival delays propagate along one Swiss main-line
-corridor, using SBB's public operational data.
+A short empirical analysis of how arrival delays propagate along one Swiss
+main-line corridor, using SBB's public operational data.
 
 ## Motivation
 
-Railway timetables are designed for a nominal day where everything runs to plan.
-In practice, small delays occur constantly and larger delays occasionally, and a
-central question in transport research is whether a schedule that is optimal
-on paper is also robust in operation — i.e., whether it absorbs incoming delay
-or lets it propagate downstream. This analysis takes one main-line corridor
-(Zürich HB ↔ Chur) and asks: how much of the delay observed at one station
-carries forward to the next, and does the pattern vary along the corridor?
+Railway timetables are designed for a nominal day where everything runs to
+plan. In practice, small delays occur constantly and larger delays occasionally,
+and a central question in transport research is whether a schedule that is
+optimal on paper is also robust in operation — i.e., whether it absorbs
+incoming delay or lets it propagate downstream. This analysis takes one
+main-line corridor (Zürich HB ↔ Chur) and asks: how much of the delay observed
+at one station carries forward to the next, and does the pattern vary along
+the corridor?
 
 The finding is that the propagation coefficient varies substantially between
 segments — some segments absorb delay strongly, others carry it almost
@@ -21,15 +22,15 @@ where being on time matters most for passenger connections.
 ## Data
 
 The analysis uses [`ist-daten-v2`](https://data.opentransportdata.swiss/en/dataset/ist-daten-v2),
-the actual-arrivals dataset published by the Business Office SKI on behalf of the
-Swiss Federal Office of Transport (FOT). One CSV per operating day, one row per
-train-stop event, with both scheduled and measured (`REAL`-status) times where
-telemetry is available.
+the actual-arrivals dataset published by the Business Office SKI on behalf of
+the Swiss Federal Office of Transport (FOT). One CSV per operating day, one
+row per train-stop event, with both scheduled and measured (`REAL`-status)
+times where telemetry is available.
 
-The dataset for 10 September 2026 contains 2,528,136 rows across all Swiss public
-transport. After filtering to railway operations, valid non-cancelled trips,
-`REAL`-status telemetry, and the nine corridor stations, 3,327 arrival events
-remain across roughly 2,184 unique trains.
+The dataset for 10 September 2026 contains 2,528,136 rows across all Swiss
+public transport. After filtering to railway operations, valid non-cancelled
+trips, `REAL`-status telemetry, and the nine corridor stations, 3,327 arrival
+events remain across roughly 2,184 unique trains.
 
 Corridor stations (in geographic order, Zürich → Chur):
 Zürich HB, Thalwil, Pfäffikon SZ, Ziegelbrücke, Sargans, Bad Ragaz, Maienfeld,
@@ -40,46 +41,64 @@ behalf of the Swiss Federal Office of Transport, licensed under CC-BY-4.0.*
 
 ## Method
 
-For each of the eight adjacent-station segments along the corridor, the arrival
-delay at the earlier station (`x`, in minutes) is regressed on the arrival
-delay at the later station (`y`, in minutes) via ordinary least squares:
-$y_i = α + β · x_i + ε_i$
+For each of the eight adjacent-station segments along the corridor, the
+arrival delay at the earlier station ($x$, in minutes) is regressed on the
+arrival delay at the later station ($y$, in minutes) via ordinary least
+squares:
 
-The slope $\beta$ is the **propagation coefficient**: $$\beta = 1$$ means delay carries
-forward untouched; $\beta = 0$ means the segment fully absorbs incoming delay;
-$\beta \lt 1$ indicates partial absorption. The intercept $\alpha$ measures the baseline
-delay accretion for a punctual train — how many minutes late even an
-on-time train tends to arrive at the next station.
+$$y_i = \alpha + \beta \, x_i + \varepsilon_i, \qquad i = 1, \ldots, n$$
 
-Both travel directions (Zürich → Chur and Chur → Zürich) are pooled; the sample
-size per segment ranges from 59 to 272 trains.
+The slope $\beta$ is the **propagation coefficient**: $\beta = 1$ means delay
+carries forward untouched; $\beta = 0$ means the segment fully absorbs
+incoming delay; $\beta < 1$ indicates partial absorption. The intercept
+$\alpha$ measures the baseline delay accretion for a punctual train — how
+many minutes late even an on-time train tends to arrive at the next station.
+
+Both travel directions (Zürich → Chur and Chur → Zürich) are pooled; the
+sample size per segment ranges from $n = 59$ to $n = 272$ trains.
 
 ## Findings
 
-Propagation is highly non-uniform along the corridor:
+**Propagation is not uniform along the corridor.** For each segment I fit an
+OLS regression of the arrival delay at the later station on the arrival delay
+at the earlier station; the slope $\beta$ is the propagation coefficient. The
+plot below shows $\beta$ for each of the eight adjacent-station segments (in
+geographic order left to right), with 95% confidence intervals and per-segment
+sample sizes. The two reference lines mark $\beta = 1$ (delays carry forward
+untouched) and $\beta = 0$ (delays fully absorbed).
 
 ![Propagation coefficient along the corridor](plots/propagation_beta.png)
 
-- Segments approaching the major terminals — Zürich HB and Chur — absorb roughly
-  half of incoming delay (β ≈ 0.46).
-- Segments in the middle of the corridor (Sargans → Bad Ragaz → Maienfeld) carry
-  delay almost perfectly (β ∈ [0.90, 0.96]), with very little slack.
-- One segment stands out: Pfäffikon SZ → Ziegelbrücke, with β ≈ 0.14 — an
-  unusually strong absorber, possibly reflecting a generous scheduled running
-  time or operational catch-up on that stretch.
+Three observations:
 
-The underlying delay distribution is heavily right-skewed:
+- **Both ends of the corridor absorb delay.** Segments approaching Zürich HB
+  and Chur have $\beta \approx 0.46$ — nearly half of incoming delay
+  dissipates before the terminal.
+- **The middle carries delay almost perfectly.** Sargans → Bad Ragaz →
+  Maienfeld: $\beta \in [0.90, 0.96]$. The tight schedule between these minor
+  stops has no absorption capacity.
+- **One segment stands out.** Pfäffikon SZ → Ziegelbrücke: $\beta \approx 0.14$
+  — an unusually strong absorber, possibly reflecting a generous scheduled
+  running time or operational catch-up on that stretch.
+
+**The underlying delay distribution is bulk-heavy near zero, with a long
+right tail.** The histogram below shows the marginal distribution of arrival
+delays across all 3,327 corridor arrival events, with reference lines at the
+median and the 90th percentile.
 
 ![Distribution of arrival delays](plots/delay_distribution.png)
 
-Median delay is 0.5 minutes; the 90th percentile is 2.5 minutes; the maximum
-observed delay is 34.3 minutes. On-average metrics look excellent, but the
-tail is where operational impact lives.
+Median delay is 0.5 min; the 90th percentile is 2.5 min; the maximum is
+34.3 min. On-average metrics look excellent — average delay was well under
+one minute — but the tail contains rare events far beyond what the average
+suggests. This is the shape that motivates *robust* rather than nominal
+timetabling: a schedule optimised for the average case can still fail badly
+in the tail.
 
 ## Limitations
 
-This is a first-cut exploratory analysis on a single day and should be read as
-such.
+This is a first-cut exploratory analysis on a single day and should be read
+as such.
 
 - **One day.** Any day-specific idiosyncrasies (weather, incidents, service
   patterns) are baked into the point estimates. A multi-day analysis would
@@ -87,27 +106,30 @@ such.
 - **Both directions pooled.** Buffer placement in real timetables is often
   asymmetric — slack tends to sit before major terminals in the direction of
   travel — but pooling averages this away.
-- **Small-vs-large delay comparison not possible on this day.** Only ~10% of
-  arrivals exceeded 3 minutes of delay; after requiring both-endpoint segment
-  coverage, per-segment large-delay counts dropped to 0–22. Comparing
+- **Small-vs-large delay comparison not possible on this day.** Only $\sim 10\%$
+  of arrivals exceeded 3 minutes of delay; after requiring both-endpoint
+  segment coverage, per-segment large-delay counts dropped to 0–22. Comparing
   propagation in the small-delay and large-delay regimes would require a day
   with more disruption.
 - **Service categories pooled.** IC/ICE, IR, RE, and S services all contribute
   to the same per-segment regressions. Stratifying by service type would show
-  whether the observed β reflects segment structure or train mix.
+  whether the observed $\beta$ reflects segment structure or train mix.
 - **Standard errors are approximate.** Residuals are approximately mean-zero
   but have heavier right tails than Gaussian (see residual diagnostics in the
   notebook); the OLS-formula CIs are asymptotically valid but slightly
   optimistic.
 
-Natural extensions are (1) a bad-day comparison to characterise the large-delay
-regime, (2) a direction split with time-of-day stratification, and (3) using
-the empirical β profile as input to a robust-timetabling optimisation, in the
-tradition of Leutwiler & Corman's Benders-decomposition work.
+Natural extensions are (1) a bad-day comparison to characterise the
+large-delay regime, (2) a direction split with time-of-day stratification,
+and (3) using the empirical $\beta$ profile as input to a robust-timetabling
+optimisation, in the tradition of Leutwiler & Corman's Benders-decomposition
+work.
 
 ## Reproducing the analysis
 
 Requirements:
+
+pandas, numpy, scipy, matplotlib
 
 Or, from the included `requirements.txt`:
 
@@ -115,8 +137,8 @@ Or, from the included `requirements.txt`:
 pip install -r requirements.txt
 ```
 
-The CSV is ~614 MB and is not included in the repository. Download it directly
-from opentransportdata.swiss:
+The CSV is ~614 MB and is not included in the repository. Download it
+directly from opentransportdata.swiss:
 
 ```bash
 wget https://opentransportdata.swiss/wp-content/uploads/ist-daten-archive/2026-09-10_IstDaten.csv
@@ -134,9 +156,7 @@ Then open `notebook.ipynb` and run the cells top to bottom.
 2. Leutwiler, F., & Corman, F. (2023). *Set-covering-based Benders
    decomposition heuristic for railway timetabling.*
 
-## License
+## Licenses
 
-MIT — see `LICENSE`.
-
-Analysis and code © 2026 Faisal Hussain Shah.
-Data © opentransportdata.swiss (CC-BY-4.0).
+- Code: MIT (see `LICENSE`).
+- Data: opentransportdata.swiss, CC-BY-4.0.
