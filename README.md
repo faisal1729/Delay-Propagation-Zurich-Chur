@@ -108,3 +108,35 @@ tradition of Leutwiler & Corman's Benders-decomposition work.
 ## Reproducing the analysis
 
 Requirements:
+
+Or, from the included `requirements.txt`:
+
+```bash
+pip install -r requirements.txt
+```
+
+The CSV is ~614 MB and is not included in the repository. Download it directly
+from opentransportdata.swiss:
+
+```bash
+wget https://opentransportdata.swiss/wp-content/uploads/ist-daten-archive/2026-09-10_IstDaten.csv
+```
+
+Then open `notebook.ipynb` and run the cells top to bottom.
+
+## References
+
+1. Büchel, B., Spanninger, T., & Corman, F. (2020). *Empirical dynamics of
+   railway delay propagation identified during the large-scale Rastatt
+   disruption.* Scientific Reports, 10, 18584.
+   [DOI: 10.1038/s41598-020-75538-z](https://doi.org/10.1038/s41598-020-75538-z)
+
+2. Leutwiler, F., & Corman, F. (2023). *Set-covering-based Benders
+   decomposition heuristic for railway timetabling.*
+
+## License
+
+MIT — see `LICENSE`.
+
+Analysis and code © 2026 Faisal Hussain Shah.
+Data © opentransportdata.swiss (CC-BY-4.0).
