@@ -67,7 +67,7 @@ geographic order left to right), with 95% confidence intervals and per-segment
 sample sizes. The two reference lines mark $\beta = 1$ (delays carry forward
 untouched) and $\beta = 0$ (delays fully absorbed).
 
-![Propagation coefficient along the corridor](plots/propagation_beta.png)
+![Propagation coefficient along the corridor](plots/plot2_propagation_beta.png)
 
 Three observations:
 
@@ -86,7 +86,7 @@ right tail.** The histogram below shows the marginal distribution of arrival
 delays across all 3,327 corridor arrival events, with reference lines at the
 median and the 90th percentile.
 
-![Distribution of arrival delays](plots/delay_distribution.png)
+![Distribution of arrival delays](plots/plot1_delay_distribution.png)
 
 Median delay is 0.5 min; the 90th percentile is 2.5 min; the maximum is
 34.3 min. On-average metrics look excellent — average delay was well under
