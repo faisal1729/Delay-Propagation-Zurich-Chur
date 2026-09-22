@@ -45,9 +45,9 @@ delay at the earlier station (`x`, in minutes) is regressed on the arrival
 delay at the later station (`y`, in minutes) via ordinary least squares:
 $y_i = α + β · x_i + ε_i$
 
-The slope β is the **propagation coefficient**: $$\beta = 1$$ means delay carries
-forward untouched; β = 0 means the segment fully absorbs incoming delay;
-β < 1 indicates partial absorption. The intercept α measures the baseline
+The slope $\beta$ is the **propagation coefficient**: $$\beta = 1$$ means delay carries
+forward untouched; $\beta = 0$ means the segment fully absorbs incoming delay;
+$\beta \lt 1$ indicates partial absorption. The intercept $\alpha$ measures the baseline
 delay accretion for a punctual train — how many minutes late even an
 on-time train tends to arrive at the next station.
 
