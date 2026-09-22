@@ -43,7 +43,7 @@ behalf of the Swiss Federal Office of Transport, licensed under CC-BY-4.0.*
 For each of the eight adjacent-station segments along the corridor, the arrival
 delay at the earlier station (`x`, in minutes) is regressed on the arrival
 delay at the later station (`y`, in minutes) via ordinary least squares:
-y_i = α + β · x_i + ε_i
+$$y_i = α + β · x_i + ε_i$$
 
 The slope β is the **propagation coefficient**: β = 1 means delay carries
 forward untouched; β = 0 means the segment fully absorbs incoming delay;
