@@ -138,11 +138,7 @@ pip install -r requirements.txt
 ```
 
 The CSV is ~614 MB and is not included in the repository. Download it
-directly from opentransportdata.swiss:
-
-```bash
-wget https://opentransportdata.swiss/wp-content/uploads/ist-daten-archive/2026-09-10_IstDaten.csv
-```
+directly from opentransportdata.swiss.
 
 Then open `analysis.py` and run the cells top to bottom.
 
