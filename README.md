@@ -144,7 +144,7 @@ directly from opentransportdata.swiss:
 wget https://opentransportdata.swiss/wp-content/uploads/ist-daten-archive/2026-09-10_IstDaten.csv
 ```
 
-Then open `analysis.ipynb` and run the cells top to bottom.
+Then open `analysis.py` and run the cells top to bottom.
 
 ## References
 
